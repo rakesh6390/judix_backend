@@ -1,4 +1,4 @@
-import 'dotenv/config'; // ✅ BEST FIX
+import 'dotenv/config'; // ✅ loads env variables
 
 import express from 'express';
 import cors from 'cors';
@@ -9,7 +9,7 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import taskRoutes from './routes/tasks.js';
 
-// Connect DB
+// Connect DB (safe for serverless)
 connectDB();
 
 const app = express();
@@ -19,15 +19,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Server is running' });
 });
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/tasks', taskRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+//
+export default app; // ✅ REQUIRED FOR VERCEL
